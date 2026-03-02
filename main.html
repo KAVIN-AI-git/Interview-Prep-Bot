@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Interview Prep Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e1a;
+  --card:#111827;
+  --card2:#1a2235;
+  --border:rgba(255,255,255,.08);
+  --accent:#6366f1;
+  --accent2:#818cf8;
+  --green:#10b981;
+  --yellow:#f59e0b;
+  --red:#ef4444;
+  --text:#f1f5f9;
+  --muted:#64748b;
+  --muted2:#94a3b8;
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+/* animated bg */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 20%,rgba(99,102,241,.12) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(16,185,129,.08) 0%,transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+.app{
+  max-width:900px;margin:0 auto;
+  padding:30px 20px 60px;
+  position:relative;z-index:1;
+}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:40px;padding-top:20px}
+.header-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(99,102,241,.15);
+  border:1px solid rgba(99,102,241,.3);
+  color:var(--accent2);
+  font-size:.75rem;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;padding:6px 16px;border-radius:100px;
+  margin-bottom:16px;
+}
+.header-badge span{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,5vw,3rem);
+  font-weight:800;letter-spacing:-.03em;
+  background:linear-gradient(135deg,#fff,var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:10px;
+}
+.header-sub{color:var(--muted2);font-size:1rem;max-width:500px;margin:0 auto}
+
+/* SETUP CARD */
+.setup-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;padding:32px;
+  margin-bottom:24px;
+  animation:fadeUp .5s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.setup-title{
+  font-family:'Syne',sans-serif;
+  font-size:1.05rem;font-weight:700;
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.setup-title .icon{
+  width:32px;height:32px;border-radius:9px;
+  background:rgba(99,102,241,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group label{
+  display:block;font-size:.75rem;font-weight:600;
+  color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:7px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;padding:11px 14px;
+  background:var(--card2);
+  border:1.5px solid var(--border);
+  border-radius:10px;color:var(--text);
+  font-size:.92rem;font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  border-color:rgba(99,102,241,.5);
+  box-shadow:0 0 0 3px rgba(99,102,241,.1);
+}
+.form-group select option{background:#1a2235}
+.form-group textarea{min-height:80px;resize:vertical}
+
+.btn-start{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--accent),#4f46e5);
+  color:#fff;font-weight:700;font-size:1rem;
+  font-family:'Syne',sans-serif;
+  border:none;border-radius:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .2s,box-shadow .2s;
+  letter-spacing:.02em;margin-top:8px;
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(99,102,241,.4)}
+.btn-start:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* SESSION HEADER */
+.session-bar{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;padding:16px 22px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;flex-wrap:wrap;gap:12px;
+  animation:fadeUp .4s ease;
+}
+.session-info{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.session-chip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--card2);border:1px solid var(--border);
+  padding:5px 12px;border-radius:100px;font-size:.8rem;color:var(--muted2);
+}
+.session-chip b{color:var(--text)}
+.progress-wrap{display:flex;align-items:center;gap:10px}
+.progress-bar{
+  width:160px;height:6px;background:var(--card2);
+  border-radius:6px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--accent),var(--green));
+  border-radius:6px;transition:width .6s cubic-bezier(.34,1.56,.64,1);
+}
+.progress-text{font-size:.78rem;color:var(--muted2);white-space:nowrap}
+.btn-end{
+  background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);
+  color:#ef4444;padding:7px 16px;border-radius:8px;
+  font-size:.82rem;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:background .2s;
+}
+.btn-end:hover{background:rgba(239,68,68,.25)}
+
+/* QUESTION CARD */
+.q-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;padding:30px;
+  margin-bottom:20px;
+  animation:fadeUp .4s ease;
+}
+.q-meta{
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;
+}
+.q-num{
+  font-family:'Syne',sans-serif;
+  font-size:.78rem;font-weight:700;color:var(--accent2);
+  background:rgba(99,102,241,.15);
+  border:1px solid rgba(99,102,241,.25);
+  padding:4px 12px;border-radius:100px;letter-spacing:.06em;
+}
+.q-type{
+  font-size:.75rem;font-weight:600;padding:4px 10px;
+  border-radius:100px;
+}
+.type-behavioral{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
+.type-technical{background:rgba(99,102,241,.12);color:var(--accent2);border:1px solid rgba(99,102,241,.25)}
+.type-situational{background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25)}
+.type-hr{background:rgba(236,72,153,.12);color:#ec4899;border:1px solid rgba(236,72,153,.25)}
+
+.q-text{
+  font-family:'Syne',sans-serif;
+  font-size:1.15rem;font-weight:700;
+  line-height:1.45;color:var(--text);
+  margin-bottom:22px;
+}
+.q-tip{
+  background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15);
+  border-radius:10px;padding:12px 16px;
+  font-size:.82rem;color:var(--muted2);
+  display:flex;align-items:flex-start;gap:8px;
+  margin-bottom:20px;
+}
+.q-tip::before{content:'💡';flex-shrink:0}
+
+.answer-area{
+  width:100%;min-height:120px;padding:14px 16px;
+  background:var(--card2);
+  border:1.5px solid var(--border);
+  border-radius:12px;color:var(--text);
+  font-size:.95rem;font-family:'DM Sans',sans-serif;
+  line-height:1.65;resize:vertical;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  margin-bottom:14px;
+}
+.answer-area:focus{
+  border-color:rgba(99,102,241,.5);
+  box-shadow:0 0 0 3px rgba(99,102,241,.08);
+}
+.answer-area::placeholder{color:var(--muted)}
+
+.btn-row{display:flex;gap:10px;justify-content:flex-end}
+.btn-submit{
+  background:linear-gradient(135deg,var(--accent),#4f46e5);
+  color:#fff;font-weight:700;font-size:.9rem;
+  font-family:'Syne',sans-serif;
+  padding:12px 28px;border-radius:10px;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:7px;
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(99,102,241,.4)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-skip{
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--muted2);font-size:.88rem;font-weight:500;
+  padding:12px 20px;border-radius:10px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:border-color .2s,color .2s;
+}
+.btn-skip:hover{border-color:var(--muted);color:var(--text)}
+
+/* FEEDBACK CARD */
+.feedback-card{
+  border-radius:20px;padding:28px;
+  margin-bottom:20px;
+  animation:fadeUp .4s ease;
+}
+.feedback-card.good{
+  background:rgba(16,185,129,.06);
+  border:1px solid rgba(16,185,129,.2);
+}
+.feedback-card.ok{
+  background:rgba(245,158,11,.06);
+  border:1px solid rgba(245,158,11,.2);
+}
+.feedback-card.improve{
+  background:rgba(239,68,68,.06);
+  border:1px solid rgba(239,68,68,.2);
+}
+
+.feedback-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;flex-wrap:wrap;gap:10px;
+}
+.score-badge{
+  display:flex;align-items:center;gap:10px;
+}
+.score-ring{
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;
+}
+.score-ring.good{background:rgba(16,185,129,.2);color:#10b981;border:2px solid #10b981}
+.score-ring.ok{background:rgba(245,158,11,.2);color:#f59e0b;border:2px solid #f59e0b}
+.score-ring.improve{background:rgba(239,68,68,.2);color:#ef4444;border:2px solid #ef4444}
+
+.feedback-label{
+  font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;
+}
+.feedback-body{font-size:.9rem;color:var(--muted2);line-height:1.7}
+.feedback-body b{color:var(--text)}
+
+.sample-answer{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:12px;padding:16px;margin-top:14px;
+}
+.sample-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent2);
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.sample-label::before{content:'✨'}
+.sample-text{font-size:.88rem;color:var(--muted2);line-height:1.7}
+
+.btn-next{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--accent),#4f46e5);
+  color:#fff;font-weight:700;font-size:.95rem;
+  font-family:'Syne',sans-serif;
+  border:none;border-radius:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .2s,box-shadow .2s;
+  margin-top:16px;
+}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(99,102,241,.4)}
+
+/* LOADING */
+.loading{
+  display:flex;flex-direction:column;align-items:center;
+  padding:40px;gap:16px;
+}
+.spinner{
+  width:44px;height:44px;border-radius:50%;
+  border:3px solid var(--border);
+  border-top-color:var(--accent);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--muted2);font-size:.9rem}
+
+/* RESULTS */
+.results-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:36px;
+  text-align:center;animation:fadeUp .5s ease;
+}
+.results-trophy{font-size:4rem;margin-bottom:16px;display:block}
+.results-title{
+  font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;
+  margin-bottom:8px;
+}
+.results-sub{color:var(--muted2);font-size:.95rem;margin-bottom:30px}
+.results-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  margin-bottom:28px;
+}
+.rstat{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:14px;padding:20px;
+}
+.rstat-val{
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--accent2);display:block;line-height:1;
+}
+.rstat-lbl{font-size:.75rem;color:var(--muted2);margin-top:6px;font-weight:500}
+.btn-restart{
+  background:linear-gradient(135deg,var(--accent),#4f46e5);
+  color:#fff;font-weight:700;font-size:.97rem;
+  font-family:'Syne',sans-serif;
+  padding:14px 36px;border-radius:12px;border:none;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-restart:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(99,102,241,.4)}
+
+/* hidden */
+.hidden{display:none!important}
+
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr}
+  .results-grid{grid-template-columns:1fr 1fr}
+  .session-bar{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge"><span></span>Powered by Chottu chart AI</div>
+    <h1>🎤 Interview Prep Bot</h1>
+    <p class="header-sub">AI-powered mock interviews with instant feedback. Practice, improve, and land your dream job!</p>
+  </div>
+
+  <!-- SETUP -->
+  <div class="setup-card" id="setupSection">
+    <div class="setup-title">
+      <div class="icon">⚙️</div>
+      Setup Your Interview
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Job Role / Position</label>
+        <input type="text" id="jobRole" placeholder="e.g. Software Engineer, Sales Manager">
+      </div>
+      <div class="form-group">
+        <label>Experience Level</label>
+        <select id="expLevel">
+          <option value="fresher">Fresher (0–1 yr)</option>
+          <option value="junior">Junior (1–3 yrs)</option>
+          <option value="mid" selected>Mid-level (3–6 yrs)</option>
+          <option value="senior">Senior (6+ yrs)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Industry</label>
+        <select id="industry">
+          <option value="Technology">Technology / IT</option>
+          <option value="Finance">Finance / Banking</option>
+          <option value="Marketing">Marketing / Sales</option>
+          <option value="Healthcare">Healthcare</option>
+          <option value="Education">Education</option>
+          <option value="Trading / Forex">Trading / Forex</option>
+          <option value="E-commerce">E-commerce</option>
+          <option value="General">General / Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Number of Questions</label>
+        <select id="numQuestions">
+          <option value="3">3 Questions (Quick)</option>
+          <option value="5" selected>5 Questions (Standard)</option>
+          <option value="8">8 Questions (Full)</option>
+          <option value="10">10 Questions (Intensive)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Skills / Focus Areas (optional)</label>
+      <textarea id="skills" placeholder="e.g. Python, Leadership, Customer Service, Risk Management..."></textarea>
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+      <label>Language</label>
+      <select id="lang">
+        <option value="English">English</option>
+        <option value="Tamil">Tamil (தமிழ்)</option>
+        <option value="Hindi">Hindi</option>
+      </select>
+    </div>
+    <button class="btn-start" id="startBtn" onclick="startInterview()">
+      🚀 Start Mock Interview
+    </button>
+  </div>
+
+  <!-- SESSION BAR -->
+  <div class="session-bar hidden" id="sessionBar">
+    <div class="session-info">
+      <div class="session-chip">Role: <b id="chipRole">—</b></div>
+      <div class="session-chip">Level: <b id="chipLevel">—</b></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <span class="progress-text" id="progressText">0 / 0</span>
+    </div>
+    <button class="btn-end" onclick="endInterview()">End Session</button>
+  </div>
+
+  <!-- QUESTION AREA -->
+  <div id="questionSection" class="hidden"></div>
+
+  <!-- RESULTS -->
+  <div class="results-card hidden" id="resultsSection">
+    <span class="results-trophy">🏆</span>
+    <div class="results-title">Interview Complete!</div>
+    <p class="results-sub">Great job completing your mock interview. Here's your performance summary:</p>
+    <div class="results-grid">
+      <div class="rstat"><span class="rstat-val" id="rTotal">0</span><div class="rstat-lbl">Questions Answered</div></div>
+      <div class="rstat"><span class="rstat-val" id="rAvg">0%</span><div class="rstat-lbl">Average Score</div></div>
+      <div class="rstat"><span class="rstat-val" id="rBest">—</span><div class="rstat-lbl">Best Performance</div></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">🔄 Start New Interview</button>
+  </div>
+
+</div>
+
+<script>
+const API = "https://api.anthropic.com/v1/messages";
+
+let state = {
+  questions: [],
+  currentQ: 0,
+  scores: [],
+  role: '',
+  level: '',
+  lang: '',
+  total: 5,
+  awaitingFeedback: false,
+};
+
+// ── Start Interview ──────────────────────────────────────────────────
+async function startInterview() {
+  const role  = document.getElementById('jobRole').value.trim();
+  const level = document.getElementById('expLevel').value;
+  const industry = document.getElementById('industry').value;
+  const num   = parseInt(document.getElementById('numQuestions').value);
+  const skills = document.getElementById('skills').value.trim();
+  const lang  = document.getElementById('lang').value;
+
+  if (!role) { alert('Please enter a job role!'); return; }
+
+  state = { questions:[], currentQ:0, scores:[], role, level, lang, total:num, awaitingFeedback:false };
+
+  // UI
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true; btn.innerHTML = '⏳ Generating questions...';
+
+  document.getElementById('setupSection').classList.add('hidden');
+  document.getElementById('sessionBar').classList.remove('hidden');
+  document.getElementById('chipRole').textContent = role;
+  document.getElementById('chipLevel').textContent = level;
+  updateProgress();
+
+  // Generate all questions up front
+  showLoading('Generating interview questions...');
+
+  const prompt = `You are an expert interview coach. Generate exactly ${num} interview questions for:
+- Role: ${role}
+- Level: ${level}
+- Industry: ${industry}
+- Skills focus: ${skills || 'general'}
+- Language: ${lang}
+
+Return ONLY a JSON array, no markdown, no extra text:
+[
+  {"question":"...","type":"behavioral|technical|situational|hr","tip":"short interviewer tip for candidate"}
+]
+
+Mix question types. Make questions realistic and challenging for the ${level} level.`;
+
+  try {
+    const res = await callClaude(prompt);
+    const clean = res.replace(/```json|```/g,'').trim();
+    state.questions = JSON.parse(clean);
+    showQuestion();
+  } catch(e) {
+    showError('Failed to generate questions. Check your connection and try again.');
+    restart();
+  }
+}
+
+// ── Show Question ───────────────────────────────────────────────────
+function showQuestion() {
+  if (state.currentQ >= state.questions.length) { showResults(); return; }
+
+  const q = state.questions[state.currentQ];
+  const qn = state.currentQ + 1;
+  updateProgress();
+
+  const html = `
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-num">Q${qn} of ${state.total}</span>
+        <span class="q-type type-${q.type}">${q.type.charAt(0).toUpperCase()+q.type.slice(1)}</span>
+      </div>
+      <div class="q-text">${q.question}</div>
+      ${q.tip ? `<div class="q-tip">${q.tip}</div>` : ''}
+      <textarea class="answer-area" id="answerInput"
+        placeholder="Type your answer here... Take your time, structure your thoughts."
+        rows="5"></textarea>
+      <div class="btn-row">
+        <button class="btn-skip" onclick="skipQuestion()">Skip</button>
+        <button class="btn-submit" id="submitBtn" onclick="submitAnswer()">
+          ✨ Get AI Feedback
+        </button>
+      </div>
+    </div>`;
+
+  document.getElementById('questionSection').classList.remove('hidden');
+  document.getElementById('questionSection').innerHTML = html;
+  document.getElementById('answerInput').focus();
+}
+
+// ── Submit Answer ───────────────────────────────────────────────────
+async function submitAnswer() {
+  const answer = document.getElementById('answerInput').value.trim();
+  if (!answer || answer.length < 15) { alert('Please write a proper answer (at least a few sentences).'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.innerHTML = '⏳ Analysing...';
+
+  const q = state.questions[state.currentQ];
+
+  showLoading('Analysing your answer with AI...');
+
+  const prompt = `You are a senior HR interviewer and career coach. 
+Evaluate this interview answer in ${state.lang}.
+
+Job Role: ${state.role} (${state.level})
+Question: ${q.question}
+Question Type: ${q.type}
+Candidate's Answer: ${answer}
+
+Return ONLY valid JSON, no markdown:
+{
+  "score": <number 1-10>,
+  "verdict": "Excellent|Good|Needs Improvement",
+  "strengths": "<what they did well, 1-2 sentences>",
+  "improvements": "<specific what to improve, 1-2 sentences>",
+  "sample_answer": "<a strong model answer for this question, 3-4 sentences>"
+}`;
+
+  try {
+    const res = await callClaude(prompt);
+    const clean = res.replace(/```json|```/g,'').trim();
+    const fb = JSON.parse(clean);
+    state.scores.push(fb.score);
+    showFeedback(q, answer, fb);
+  } catch(e) {
+    // fallback feedback
+    showFeedback(q, answer, {
+      score:6, verdict:"Good",
+      strengths:"Your answer showed relevant experience.",
+      improvements:"Try to use the STAR method (Situation, Task, Action, Result) for more structure.",
+      sample_answer:"A strong answer would clearly describe the situation, your specific actions, and the measurable result achieved."
+    });
+  }
+}
+
+// ── Show Feedback ───────────────────────────────────────────────────
+function showFeedback(q, answer, fb) {
+  const scoreClass = fb.score >= 8 ? 'good' : fb.score >= 6 ? 'ok' : 'improve';
+  const emoji = fb.score >= 8 ? '🌟' : fb.score >= 6 ? '👍' : '💪';
+
+  const html = `
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-num">Q${state.currentQ+1} of ${state.total}</span>
+        <span class="q-type type-${q.type}">${q.type.charAt(0).toUpperCase()+q.type.slice(1)}</span>
+      </div>
+      <div class="q-text">${q.question}</div>
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.85rem;color:var(--muted2);font-style:italic">
+        "${answer.length > 200 ? answer.substring(0,200)+'...' : answer}"
+      </div>
+    </div>
+    <div class="feedback-card ${scoreClass}">
+      <div class="feedback-header">
+        <div class="score-badge">
+          <div class="score-ring ${scoreClass}">${fb.score}/10</div>
+          <div>
+            <div class="feedback-label">${emoji} ${fb.verdict}</div>
+            <div style="font-size:.78rem;color:var(--muted2);margin-top:2px">AI Feedback</div>
+          </div>
+        </div>
+      </div>
+      <div class="feedback-body">
+        <div style="margin-bottom:10px">✅ <b>Strengths:</b> ${fb.strengths}</div>
+        <div style="margin-bottom:10px">🎯 <b>Improve:</b> ${fb.improvements}</div>
+      </div>
+      <div class="sample-answer">
+        <div class="sample-label">Model Answer</div>
+        <div class="sample-text">${fb.sample_answer}</div>
+      </div>
+      <button class="btn-next" onclick="nextQuestion()">
+        ${state.currentQ + 1 >= state.total ? '🏁 See Results' : '→ Next Question'}
+      </button>
+    </div>`;
+
+  document.getElementById('questionSection').innerHTML = html;
+  document.getElementById('questionSection').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ── Navigation ──────────────────────────────────────────────────────
+function nextQuestion() {
+  state.currentQ++;
+  if (state.currentQ >= state.questions.length) { showResults(); }
+  else { showQuestion(); }
+}
+
+function skipQuestion() {
+  state.scores.push(0);
+  state.currentQ++;
+  if (state.currentQ >= state.questions.length) { showResults(); }
+  else { showQuestion(); }
+}
+
+function endInterview() {
+  if (state.currentQ === 0) { restart(); return; }
+  if (confirm('End session and see results?')) showResults();
+}
+
+// ── Results ─────────────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('questionSection').classList.add('hidden');
+  document.getElementById('sessionBar').classList.add('hidden');
+
+  const answered = state.scores.filter(s=>s>0).length;
+  const avg = answered > 0 ? Math.round(state.scores.filter(s=>s>0).reduce((a,b)=>a+b,0)/answered*10) : 0;
+  const best = state.scores.length > 0 ? Math.max(...state.scores) + '/10' : '—';
+
+  document.getElementById('rTotal').textContent = answered;
+  document.getElementById('rAvg').textContent = avg + '%';
+  document.getElementById('rBest').textContent = best;
+  document.getElementById('resultsSection').classList.remove('hidden');
+  document.getElementById('resultsSection').scrollIntoView({behavior:'smooth'});
+}
+
+function restart() {
+  document.getElementById('setupSection').classList.remove('hidden');
+  document.getElementById('sessionBar').classList.add('hidden');
+  document.getElementById('questionSection').classList.add('hidden');
+  document.getElementById('resultsSection').classList.add('hidden');
+  document.getElementById('startBtn').disabled = false;
+  document.getElementById('startBtn').innerHTML = '🚀 Start Mock Interview';
+  state = {questions:[],currentQ:0,scores:[],role:'',level:'',lang:'',total:5};
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────
+function showLoading(msg='Loading...') {
+  document.getElementById('questionSection').classList.remove('hidden');
+  document.getElementById('questionSection').innerHTML = `
+    <div class="q-card">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">${msg}</div>
+      </div>
+    </div>`;
+}
+
+function showError(msg) {
+  document.getElementById('questionSection').innerHTML = `
+    <div class="q-card" style="text-align:center;padding:40px">
+      <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
+      <div style="color:var(--red);font-weight:600">${msg}</div>
+    </div>`;
+}
+
+function updateProgress() {
+  const pct = state.total > 0 ? (state.currentQ / state.total) * 100 : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = state.currentQ + ' / ' + state.total;
+}
+
+async function callClaude(prompt) {
+  const response = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await response.json();
+  return data.content.map(c => c.text || '').join('');
+}
+</script>
+</body>
+</html>
