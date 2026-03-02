@@ -1,5 +1,5 @@
 import streamlit as st
-import anthropic
+from groq import Groq
 import json
 import re
 
@@ -260,17 +260,17 @@ init_state()
 
 # ── Claude API ─────────────────────────────────────────────────────────
 def call_claude(prompt: str, max_tokens: int = 1200) -> str:
-    api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
+    api_key = st.secrets.get("GROQ_API_KEY", "")
     if not api_key:
-        st.error("⚠️ API Key missing! Add ANTHROPIC_API_KEY in Streamlit Secrets.")
+        st.error("⚠️ API Key missing! Add GROQ_API_KEY in Streamlit Secrets.")
         st.stop()
-    client = anthropic.Anthropic(api_key=api_key)
-    msg = client.messages.create(
-        model="claude-opus-4-5",
+    client = Groq(api_key=api_key)
+    msg = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
         max_tokens=max_tokens,
         messages=[{"role": "user", "content": prompt}]
     )
-    return msg.content[0].text
+    return msg.choices[0].message.content
 
 
 def parse_json(text: str):
