@@ -23,6 +23,7 @@ st.markdown("""
   --paper: #f5f3ee;
   --cream: #ede9e0;
   --gold: #c9a84c;
+  --gold-bright: #e8b84b;
   --gold-light: #e8d5a3;
   --gold-dim: rgba(201,168,76,.15);
   --teal: #0d9488;
@@ -66,7 +67,7 @@ div[data-testid="stVerticalBlock"] > div:first-child {
   padding-top: 0 !important;
 }
 /* Nuke the default 6rem top padding Streamlit adds */
-.main .block-container { padding-top: 1rem !important; }
+.main .block-container { padding-top: 0 !important; }
 /* Hide empty iframe spacers */
 iframe[height="0"], iframe[height="2"] { display: none !important; }
 div[data-testid="stVerticalBlockBorderWrapper"]:empty { display: none !important; }
@@ -242,6 +243,10 @@ div[data-testid="stVerticalBlockBorderWrapper"]:empty { display: none !important
   flex: 1;
   height: 1px;
   background: var(--border);
+}
+/* Form inputs area */
+div[data-testid="stVerticalBlock"] {
+  background: transparent;
 }
 
 /* ─── STREAMLIT OVERRIDES ─── */
@@ -800,33 +805,33 @@ st.markdown("""
 st.markdown("""
 <div class="ticker-wrap">
   <div class="ticker-track">
-    <span class="tick-item">🎯 HR is ready &mdash; <em>are you?</em></span>
+    <span class="tick-item ti-gold">🎯 HR is ready &mdash; <em>are YOU?</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">💼 Your dream job won't wait</span>
+    <span class="tick-item ti-teal">💼 Your dream job won't wait</span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🔥 Practice today. Ace it tomorrow.</span>
+    <span class="tick-item ti-rose">🔥 Practice today. <em>Ace it tomorrow.</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🧠 Every answer you practice = more confidence</span>
+    <span class="tick-item ti-white">🧠 Every answer = more confidence</span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">⏱️ The interview clock is ticking</span>
+    <span class="tick-item ti-gold">⏱️ The interview clock is <em>ticking</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🎤 Speak up. Stand out. Get hired.</span>
+    <span class="tick-item ti-teal">🎤 Speak up. Stand out. <em>Get hired.</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🏆 Top candidates prepare. Do you?</span>
+    <span class="tick-item ti-rose">🏆 Top candidates prepare. <em>Do you?</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🎯 HR is ready &mdash; <em>are you?</em></span>
+    <span class="tick-item ti-gold">🎯 HR is ready &mdash; <em>are YOU?</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">💼 Your dream job won't wait</span>
+    <span class="tick-item ti-teal">💼 Your dream job won't wait</span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🔥 Practice today. Ace it tomorrow.</span>
+    <span class="tick-item ti-rose">🔥 Practice today. <em>Ace it tomorrow.</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🧠 Every answer you practice = more confidence</span>
+    <span class="tick-item ti-white">🧠 Every answer = more confidence</span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">⏱️ The interview clock is ticking</span>
+    <span class="tick-item ti-gold">⏱️ The interview clock is <em>ticking</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🎤 Speak up. Stand out. Get hired.</span>
+    <span class="tick-item ti-teal">🎤 Speak up. Stand out. <em>Get hired.</em></span>
     <span class="tick-sep">✦</span>
-    <span class="tick-item">🏆 Top candidates prepare. Do you?</span>
+    <span class="tick-item ti-rose">🏆 Top candidates prepare. <em>Do you?</em></span>
     <span class="tick-sep">✦</span>
   </div>
 </div>
@@ -864,8 +869,16 @@ st.markdown("""
   color: rgba(255,255,255,.75);
   padding: 0 20px;
 }
-.tick-item em { font-style: normal; color: var(--gold); font-weight: 700; }
-.tick-sep { color: var(--gold); opacity: .4; font-size: .7rem; flex-shrink: 0; }
+.tick-item em { font-style: normal; font-weight: 800; }
+.ti-gold { color: #f5d98b; }
+.ti-gold em { color: #ffeaa0; text-shadow: 0 0 12px rgba(255,220,80,.4); }
+.ti-teal { color: #5eead4; }
+.ti-teal em { color: #99f6e4; }
+.ti-rose { color: #fda4af; }
+.ti-rose em { color: #fecdd3; }
+.ti-white { color: rgba(255,255,255,.9); }
+.ti-white em { color: #fff; }
+.tick-sep { color: #f5d98b; opacity: .5; font-size: .7rem; flex-shrink: 0; }
 @keyframes tickerScroll {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -903,8 +916,7 @@ if st.session_state.stage == "setup":
     """, unsafe_allow_html=True)
 
     # Form
-    st.markdown('<div class="form-card animate-up delay-1">', unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Configure your session</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label" style="margin-top:0;padding-top:8px">Configure your session</div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     with col1:
@@ -931,8 +943,6 @@ if st.session_state.stage == "setup":
     col5, col6 = st.columns(2)
     with col5:
         lang = st.selectbox("Language", ["English", "Tamil", "Hindi"])
-
-    st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button("Begin Interview →", type="primary", use_container_width=True):
         if not role.strip():
