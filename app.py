@@ -6,8 +6,8 @@ import re
 
 # ── Page Config ────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="🎤 AI Interview Prep Bot",
-    page_icon="🎤",
+    page_title="InterviewIQ · AI Mock Interview",
+    page_icon="🎯",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
@@ -15,285 +15,648 @@ st.set_page_config(
 # ── CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --ink: #0a0a0f;
+  --paper: #f5f3ee;
+  --cream: #ede9e0;
+  --gold: #c9a84c;
+  --gold-light: #e8d5a3;
+  --gold-dim: rgba(201,168,76,.15);
+  --teal: #0d9488;
+  --teal-light: #99f6e4;
+  --rose: #e11d48;
+  --rose-light: #fecdd3;
+  --amber: #d97706;
+  --amber-light: #fde68a;
+  --indigo: #4f46e5;
+  --indigo-light: #c7d2fe;
+  --surface: #ffffff;
+  --surface-2: #f9f8f5;
+  --border: #e5e0d5;
+  --text-muted: #6b6560;
+  --text-body: #2d2a26;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
+  font-family: 'Cabinet Grotesk', 'Instrument Sans', sans-serif;
+  color: var(--text-body);
+  background: var(--paper);
 }
 
-/* Hide streamlit default elements */
 #MainMenu, footer, header { visibility: hidden; }
-.block-container { padding-top: 2rem; padding-bottom: 3rem; max-width: 780px; }
-
-/* ── HERO ── */
-.hero {
-    background: linear-gradient(135deg, #0f172a, #1e1b4b);
-    border-radius: 20px;
-    padding: 36px 32px;
-    text-align: center;
-    margin-bottom: 28px;
-    border: 1px solid rgba(255,255,255,.08);
-    position: relative;
-    overflow: hidden;
-}
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(99,102,241,.25), transparent 70%);
-}
-.hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #fff;
-    margin: 0 0 8px;
-    letter-spacing: -0.03em;
-}
-.hero p { color: rgba(255,255,255,.6); font-size: .95rem; margin: 0; }
-.hero-badge {
-    display: inline-block;
-    background: rgba(99,102,241,.25);
-    border: 1px solid rgba(99,102,241,.4);
-    color: #a5b4fc;
-    font-size: .72rem; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
-    padding: 5px 14px; border-radius: 100px;
-    margin-bottom: 14px;
+.block-container {
+  padding: 0 !important;
+  max-width: 800px !important;
+  margin: 0 auto;
 }
 
-/* ── CARDS ── */
-.card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 18px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.05);
+/* ─── GLOBAL WRAPPER ─── */
+.app-shell {
+  min-height: 100vh;
+  background: var(--paper);
+  padding: 32px 24px 80px;
+  position: relative;
 }
-.card-dark {
-    background: #0f172a;
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 18px;
-    color: #fff;
-}
-
-/* ── QUESTION ── */
-.q-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-}
-.q-num {
-    background: rgba(99,102,241,.12);
-    border: 1px solid rgba(99,102,241,.25);
-    color: #6366f1;
-    font-size: .72rem; font-weight: 700;
-    letter-spacing: .08em; text-transform: uppercase;
-    padding: 4px 12px; border-radius: 100px;
-}
-.q-type-badge {
-    font-size: .72rem; font-weight: 700;
-    padding: 4px 10px; border-radius: 100px;
-}
-.type-behavioral { background: rgba(245,158,11,.12); color: #d97706; border: 1px solid rgba(245,158,11,.25); }
-.type-technical   { background: rgba(99,102,241,.12); color: #6366f1; border: 1px solid rgba(99,102,241,.25); }
-.type-situational { background: rgba(16,185,129,.12); color: #059669; border: 1px solid rgba(16,185,129,.25); }
-.type-hr          { background: rgba(236,72,153,.12); color: #db2777; border: 1px solid rgba(236,72,153,.25); }
-
-.q-text {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.15rem; font-weight: 700;
-    color: #0f172a; line-height: 1.45;
-    margin-bottom: 14px;
-}
-.q-tip {
-    background: #f0f9ff;
-    border: 1px solid #bae6fd;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: .82rem; color: #0369a1;
-    margin-bottom: 16px;
+.app-shell::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 10%, rgba(201,168,76,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(13,148,136,.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ── FEEDBACK ── */
-.fb-good    { background: #ecfdf5; border: 1.5px solid #6ee7b7; border-radius: 14px; padding: 22px; margin-bottom: 16px; }
-.fb-ok      { background: #fffbeb; border: 1.5px solid #fcd34d; border-radius: 14px; padding: 22px; margin-bottom: 16px; }
-.fb-improve { background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 14px; padding: 22px; margin-bottom: 16px; }
-
-.score-big {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.8rem; font-weight: 800;
-    line-height: 1;
+/* ─── HEADER ─── */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
 }
-.score-good    { color: #059669; }
-.score-ok      { color: #d97706; }
-.score-improve { color: #dc2626; }
-
-.sample-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-top: 14px;
-    font-size: .88rem;
-    color: #475569;
-    line-height: 1.7;
+.logo-mark {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink);
 }
-.sample-label {
-    font-size: .68rem; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
-    color: #6366f1; margin-bottom: 7px;
+.logo-mark span {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 6px;
 }
-
-/* ── PROGRESS ── */
-.progress-wrap {
-    background: #f1f5f9;
-    border-radius: 100px;
-    height: 8px;
-    margin-bottom: 8px;
-    overflow: hidden;
-}
-.progress-fill {
-    height: 100%;
-    border-radius: 100px;
-    background: linear-gradient(90deg, #6366f1, #10b981);
-    transition: width .6s ease;
-}
-.progress-text {
-    font-size: .78rem; color: #64748b;
-    text-align: right; margin-bottom: 16px;
+.header-pill {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(13,148,136,.08);
+  border: 1px solid rgba(13,148,136,.2);
+  padding: 5px 12px;
+  border-radius: 100px;
 }
 
-/* ── RESULTS ── */
-.result-box {
-    background: linear-gradient(135deg, #0f172a, #1e1b4b);
-    border-radius: 20px; padding: 36px;
-    text-align: center; color: #fff;
-    margin-bottom: 20px;
+/* ─── HERO ─── */
+.hero-section {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 48px;
 }
-.result-box h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.8rem; font-weight: 800;
-    margin: 16px 0 8px;
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.result-box p { color: rgba(255,255,255,.6); margin-bottom: 24px; }
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+}
+.hero-title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+.hero-title em {
+  font-style: normal;
+  color: var(--gold);
+  position: relative;
+}
+.hero-title em::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 2px;
+  opacity: .4;
+}
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.hero-stats {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hero-stat-val {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.hero-stat-lbl {
+  font-size: .72rem;
+  color: var(--text-muted);
+  letter-spacing: .05em;
+}
 
-.stat-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 12px; margin-bottom: 24px;
+/* ─── FORM CARD ─── */
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 32px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.04);
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
 }
-.stat-item {
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: 12px; padding: 16px;
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(90deg, var(--gold), var(--teal));
 }
-.stat-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.8rem; font-weight: 800;
-    color: #a5b4fc; display: block; line-height: 1;
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.stat-lbl { font-size: .72rem; color: rgba(255,255,255,.45); margin-top: 5px; }
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
 
-/* ── STREAMLIT OVERRIDES ── */
+/* ─── STREAMLIT OVERRIDES ─── */
+div.stTextInput label, div.stSelectbox label, div.stTextArea label {
+  font-family: 'Cabinet Grotesk', sans-serif !important;
+  font-size: .82rem !important;
+  font-weight: 600 !important;
+  color: var(--text-body) !important;
+  letter-spacing: .02em !important;
+  margin-bottom: 6px !important;
+}
+div.stTextInput > div > div > input,
+div.stTextArea > div > div > textarea,
+div.stSelectbox > div > div {
+  border-radius: 10px !important;
+  border: 1.5px solid var(--border) !important;
+  background: var(--surface-2) !important;
+  font-family: 'Instrument Sans', sans-serif !important;
+  font-size: .92rem !important;
+  color: var(--text-body) !important;
+  transition: border-color .2s, box-shadow .2s !important;
+}
+div.stTextInput > div > div > input:focus,
+div.stTextArea > div > div > textarea:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(201,168,76,.12) !important;
+  background: #fff !important;
+}
+div.stSelectbox > div > div:focus-within {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(201,168,76,.12) !important;
+}
+
+/* ─── BUTTONS ─── */
 div.stButton > button {
-    border-radius: 10px !important;
-    font-weight: 600 !important;
-    font-family: 'DM Sans', sans-serif !important;
-    transition: transform .2s, box-shadow .2s !important;
-    border: none !important;
-    padding: 0.6rem 1.5rem !important;
+  font-family: 'Cabinet Grotesk', sans-serif !important;
+  font-size: .88rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .02em !important;
+  border-radius: 10px !important;
+  border: none !important;
+  padding: 0.65rem 1.6rem !important;
+  transition: transform .15s, box-shadow .15s, opacity .15s !important;
+  cursor: pointer !important;
 }
 div.stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(0,0,0,.15) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12) !important;
+}
+div.stButton > button:active {
+  transform: translateY(0) !important;
 }
 div.stButton > button[kind="primary"] {
-    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
-    color: #fff !important;
+  background: var(--ink) !important;
+  color: var(--paper) !important;
 }
-div.stTextArea textarea {
-    border-radius: 10px !important;
-    border: 1.5px solid #e2e8f0 !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: .92rem !important;
+div.stButton > button[kind="secondary"] {
+  background: transparent !important;
+  color: var(--ink) !important;
+  border: 1.5px solid var(--border) !important;
 }
-div.stTextArea textarea:focus {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,.1) !important;
-}
-div.stSelectbox > div { border-radius: 10px !important; }
-div.stTextInput > div > div > input {
-    border-radius: 10px !important;
-    border: 1.5px solid #e2e8f0 !important;
-}
-div.stSpinner { text-align: center; }
 
-/* ── VOICE BUTTON ── */
-.voice-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-    padding: 14px 16px;
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
+/* ─── PROGRESS ─── */
+.prog-bar-outer {
+  height: 6px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 6px;
 }
-.voice-btn {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    box-shadow: 0 4px 14px rgba(99,102,241,.35);
-    transition: transform .2s, box-shadow .2s;
-    flex-shrink: 0;
+.prog-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--teal));
+  border-radius: 100px;
+  transition: width .5s cubic-bezier(.4, 0, .2, 1);
 }
-.voice-btn:hover { transform: scale(1.08); box-shadow: 0 8px 20px rgba(99,102,241,.45); }
-.voice-btn.listening {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    animation: voicePulse 1s ease-in-out infinite;
-    box-shadow: 0 4px 14px rgba(239,68,68,.45);
+.prog-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: .05em;
 }
-@keyframes voicePulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,.4); }
-    50% { transform: scale(1.08); box-shadow: 0 0 0 12px rgba(239,68,68,0); }
-}
-.voice-status {
-    font-size: .85rem; color: #64748b; flex: 1;
-    display: flex; flex-direction: column; gap: 3px;
-}
-.voice-status .vs-title { font-weight: 600; color: #334155; font-size: .9rem; }
-.voice-status .vs-sub { font-size: .78rem; color: #94a3b8; }
-.voice-status.active .vs-title { color: #ef4444; }
-.voice-status.active .vs-sub { color: #f87171; }
 
-/* sound wave animation */
-.wave-wrap {
-    display: flex; align-items: center; gap: 3px; height: 24px;
+/* ─── INTERVIEW SESSION HEADER ─── */
+.session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
-.wave-bar {
-    width: 3px; border-radius: 3px;
-    background: #ef4444;
-    animation: waveAnim 0.8s ease-in-out infinite;
+.session-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
-.wave-bar:nth-child(1) { height: 8px;  animation-delay: 0s; }
-.wave-bar:nth-child(2) { height: 18px; animation-delay: .1s; }
-.wave-bar:nth-child(3) { height: 12px; animation-delay: .2s; }
-.wave-bar:nth-child(4) { height: 22px; animation-delay: .3s; }
-.wave-bar:nth-child(5) { height: 10px; animation-delay: .4s; }
-.wave-bar:nth-child(6) { height: 16px; animation-delay: .15s; }
-@keyframes waveAnim {
-    0%, 100% { transform: scaleY(0.4); opacity: .6; }
-    50%       { transform: scaleY(1);   opacity: 1; }
+.meta-chip {
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: var(--cream);
+  color: var(--text-body);
+  border: 1px solid var(--border);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: .05em;
 }
+.q-counter {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.q-counter span { color: var(--text-muted); font-size: 1rem; }
+
+/* ─── QUESTION CARD ─── */
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.question-card::after {
+  content: '"';
+  position: absolute;
+  bottom: -20px; right: 20px;
+  font-family: 'Clash Display', sans-serif;
+  font-size: 12rem;
+  color: rgba(0,0,0,.04);
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+.q-type-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.type-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+.type-behavioral { background: rgba(217,119,6,.1); color: var(--amber); border: 1px solid rgba(217,119,6,.2); }
+.type-technical   { background: rgba(79,70,229,.1); color: var(--indigo); border: 1px solid rgba(79,70,229,.2); }
+.type-situational { background: rgba(13,148,136,.1); color: var(--teal); border: 1px solid rgba(13,148,136,.2); }
+.type-hr          { background: rgba(225,29,72,.1); color: var(--rose); border: 1px solid rgba(225,29,72,.2); }
+
+.question-text {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.question-tip {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  font-size: .82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+.question-tip strong { color: var(--gold); }
+
+/* ─── VOICE ─── */
+.voice-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+}
+.mic-orb {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  transition: transform .2s, box-shadow .2s;
+  flex-shrink: 0;
+}
+.mic-orb:hover { transform: scale(1.07); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.mic-orb.on {
+  background: var(--rose);
+  animation: orbPulse 1.2s ease-in-out infinite;
+}
+@keyframes orbPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225,29,72,.3); }
+  50% { box-shadow: 0 0 0 14px rgba(225,29,72,0); }
+}
+.voice-info { flex: 1; }
+.vi-title { font-size: .88rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.vi-sub { font-size: .74rem; color: var(--text-muted); }
+.vi-sub.live { color: var(--rose); }
+.wave { display: flex; align-items: center; gap: 3px; height: 18px; }
+.wave-b {
+  width: 3px; min-height: 4px; border-radius: 3px;
+  background: var(--rose);
+  animation: wv .7s ease-in-out infinite;
+}
+.wave-b:nth-child(1) { animation-delay: 0s; }
+.wave-b:nth-child(2) { animation-delay: .1s; }
+.wave-b:nth-child(3) { animation-delay: .2s; }
+.wave-b:nth-child(4) { animation-delay: .3s; }
+.wave-b:nth-child(5) { animation-delay: .15s; }
+@keyframes wv {
+  0%, 100% { height: 4px; opacity: .5; }
+  50% { height: 18px; opacity: 1; }
+}
+
+/* ─── FEEDBACK ─── */
+.fb-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.score-display {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 4.5rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.score-good { color: var(--teal); }
+.score-ok { color: var(--amber); }
+.score-bad { color: var(--rose); }
+.verdict-stack { padding-bottom: 8px; }
+.verdict-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.verdict-text {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.fb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.fb-cell {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+.fb-cell-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lbl-green { color: var(--teal); }
+.lbl-amber { color: var(--amber); }
+.fb-cell-text {
+  font-size: .88rem;
+  color: var(--text-body);
+  line-height: 1.65;
+}
+
+.sample-answer-box {
+  background: var(--ink);
+  border-radius: 14px;
+  padding: 22px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.sample-answer-box::before {
+  content: '✦';
+  position: absolute;
+  top: 16px; right: 20px;
+  font-size: 2rem;
+  color: var(--gold);
+  opacity: .3;
+}
+.sa-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.sa-text {
+  font-size: .9rem;
+  color: rgba(255,255,255,.8);
+  line-height: 1.75;
+}
+
+/* ─── RESULTS ─── */
+.results-hero {
+  background: var(--ink);
+  border-radius: 24px;
+  padding: 44px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.results-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(201,168,76,.15) 0%, transparent 70%);
+}
+.results-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(13,148,136,.12) 0%, transparent 70%);
+}
+.trophy-emoji { font-size: 4rem; margin-bottom: 16px; display: block; }
+.results-title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+.results-sub {
+  font-size: .95rem;
+  color: rgba(255,255,255,.5);
+  margin-bottom: 32px;
+}
+.results-stats {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+.rs-item {
+  flex: 1;
+  max-width: 160px;
+  padding: 20px;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.rs-item:last-child { border-right: none; }
+.rs-val {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  display: block;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.rs-lbl { font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 6px; letter-spacing: .08em; }
+
+/* ─── EXPANDER OVERRIDES ─── */
+div[data-testid="stExpander"] {
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  margin-bottom: 10px !important;
+  box-shadow: none !important;
+  background: var(--surface) !important;
+}
+div[data-testid="stExpander"] summary {
+  font-family: 'Cabinet Grotesk', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: .9rem !important;
+}
+div.stSpinner > div {
+  border-top-color: var(--gold) !important;
+}
+
+/* ─── DIVIDER ─── */
+hr {
+  border: none !important;
+  border-top: 1px solid var(--border) !important;
+  margin: 24px 0 !important;
+}
+
+/* ─── ALERTS ─── */
+div[data-testid="stAlert"] {
+  border-radius: 12px !important;
+  border: 1.5px solid var(--border) !important;
+}
+
+/* ─── SCROLL FADE IN ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-up { animation: fadeUp .5s ease both; }
+.delay-1 { animation-delay: .1s; }
+.delay-2 { animation-delay: .2s; }
+.delay-3 { animation-delay: .3s; }
 
 </style>
 """, unsafe_allow_html=True)
@@ -302,7 +665,7 @@ div.stSpinner { text-align: center; }
 # ── Session State ──────────────────────────────────────────────────────
 def init_state():
     defaults = {
-        "stage": "setup",       # setup | interview | feedback | results
+        "stage": "setup",
         "questions": [],
         "current_q": 0,
         "scores": [],
@@ -321,8 +684,8 @@ def init_state():
 init_state()
 
 
-# ── Claude API ─────────────────────────────────────────────────────────
-def call_claude(prompt: str, max_tokens: int = 1200) -> str:
+# ── API ────────────────────────────────────────────────────────────────
+def call_api(prompt: str, max_tokens: int = 1200) -> str:
     api_key = st.secrets.get("GROQ_API_KEY", "")
     if not api_key:
         st.error("⚠️ API Key missing! Add GROQ_API_KEY in Streamlit Secrets.")
@@ -341,7 +704,6 @@ def parse_json(text: str):
     return json.loads(text)
 
 
-# ── Generate Questions ─────────────────────────────────────────────────
 def generate_questions(role, level, industry, num, skills, lang):
     prompt = f"""You are an expert interview coach. Generate exactly {num} interview questions for:
 - Role: {role}
@@ -356,12 +718,10 @@ Return ONLY a valid JSON array, no markdown, no extra text:
 ]
 
 Mix question types realistically. Make them challenging but fair for {level} level."""
-
-    raw = call_claude(prompt)
+    raw = call_api(prompt)
     return parse_json(raw)
 
 
-# ── Get Feedback ───────────────────────────────────────────────────────
 def get_feedback(role, level, question, q_type, answer, lang):
     prompt = f"""You are a senior HR interviewer and career coach.
 Evaluate this interview answer in {lang}.
@@ -379,19 +739,15 @@ Return ONLY valid JSON, no markdown:
   "improvements": "<specific improvements needed — 1-2 sentences>",
   "sample_answer": "<strong model answer — 3-4 sentences>"
 }}"""
-
-    raw = call_claude(prompt)
+    raw = call_api(prompt)
     return parse_json(raw)
 
 
-# ══════════════════════════════════════════════════════════════════════
-# HERO
-# ══════════════════════════════════════════════════════════════════════
+# ─── SITE HEADER (always visible) ─────────────────────────────────────
 st.markdown("""
-<div class="hero">
-  <div class="hero-badge">✨ Powered by Chottu_Chart AI</div>
-  <h1>🎤 Interview Prep Bot</h1>
-  <p>AI mock interviews · Real feedback · Land your dream job</p>
+<div class="site-header animate-up">
+  <div class="logo-mark"><span>IQ</span>Interview Prep</div>
+  <div class="header-pill">● AI-Powered</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -401,59 +757,80 @@ st.markdown("""
 # ══════════════════════════════════════════════════════════════════════
 if st.session_state.stage == "setup":
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown("#### ⚙️ Setup Your Interview")
+    # Hero
+    st.markdown("""
+    <div class="hero-section animate-up">
+      <div class="hero-eyebrow">Mock Interview Platform</div>
+      <h1 class="hero-title">Ace your next<br><em>interview</em></h1>
+      <p class="hero-sub">AI-powered mock interviews with real-time feedback. Practice, improve, and land your dream role.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-val">10+</div>
+          <div class="hero-stat-lbl">Industries</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">4</div>
+          <div class="hero-stat-lbl">Question Types</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">3</div>
+          <div class="hero-stat-lbl">Languages</div>
+        </div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Form
+    st.markdown('<div class="form-card animate-up delay-1">', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Configure your session</div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     with col1:
-        role = st.text_input("💼 Job Role", placeholder="e.g. Software Engineer, Sales Manager")
+        role = st.text_input("Job Role", placeholder="e.g. Software Engineer")
     with col2:
-        level = st.selectbox("📊 Experience Level", [
+        level = st.selectbox("Experience Level", [
             "Fresher (0–1 yr)", "Junior (1–3 yrs)",
             "Mid-level (3–6 yrs)", "Senior (6+ yrs)"
         ])
 
     col3, col4 = st.columns(2)
     with col3:
-        industry = st.selectbox("🏭 Industry", [
+        industry = st.selectbox("Industry", [
             "Technology / IT", "Finance / Banking",
             "Marketing / Sales", "Healthcare",
             "Education", "Trading / Forex",
             "E-commerce", "General / Other"
         ])
     with col4:
-        num = st.selectbox("📝 Questions", [3, 5, 8, 10], index=1)
+        num = st.selectbox("Number of Questions", [3, 5, 8, 10], index=1)
 
-    skills = st.text_input("🎯 Skills / Focus (optional)", placeholder="e.g. Python, Leadership, Risk Management")
+    skills = st.text_input("Skills / Focus Areas (optional)", placeholder="e.g. Python, Leadership, Risk Management")
 
     col5, col6 = st.columns(2)
     with col5:
-        lang = st.selectbox("🌐 Language", ["English", "Tamil", "Hindi"])
-    with col6:
-        st.markdown("<br>", unsafe_allow_html=True)
+        lang = st.selectbox("Language", ["English", "Tamil", "Hindi"])
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    if st.button("🚀 Start Mock Interview", type="primary", use_container_width=True):
+    if st.button("Begin Interview →", type="primary", use_container_width=True):
         if not role.strip():
-            st.error("Please enter a Job Role!")
+            st.error("Please enter a job role to continue.")
         else:
-            st.session_state.role    = role
-            st.session_state.level   = level
-            st.session_state.lang    = lang
-            st.session_state.total   = int(num)
-
-            with st.spinner("🤖 Generating your interview questions..."):
+            st.session_state.role  = role
+            st.session_state.level = level
+            st.session_state.lang  = lang
+            st.session_state.total = int(num)
+            with st.spinner("Generating your personalised interview…"):
                 try:
                     qs = generate_questions(role, level, industry, num, skills, lang)
-                    st.session_state.questions  = qs
-                    st.session_state.current_q  = 0
-                    st.session_state.scores     = []
-                    st.session_state.feedbacks  = []
-                    st.session_state.stage      = "interview"
+                    st.session_state.questions = qs
+                    st.session_state.current_q = 0
+                    st.session_state.scores    = []
+                    st.session_state.feedbacks = []
+                    st.session_state.stage     = "interview"
                     st.rerun()
                 except Exception as e:
-                    st.error(f"❌ Error generating questions: {e}")
+                    st.error(f"Error generating questions: {e}")
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -469,203 +846,150 @@ elif st.session_state.stage == "interview":
         st.session_state.stage = "results"
         st.rerun()
 
-    q = qs[cq]
+    q     = qs[cq]
+    qtype = q.get("type", "behavioral")
+    pct   = int((cq / total) * 100)
 
-    # Progress
-    pct = int((cq / total) * 100)
+    # Progress bar
     st.markdown(f"""
-    <div class="progress-wrap">
-      <div class="progress-fill" style="width:{pct}%"></div>
+    <div class="prog-bar-outer">
+      <div class="prog-bar-inner" style="width:{pct}%"></div>
     </div>
-    <div class="progress-text">{cq} of {total} completed</div>
+    <div class="prog-meta">
+      <span>{st.session_state.role} · {st.session_state.level}</span>
+      <span>{cq} / {total} answered</span>
+    </div>
     """, unsafe_allow_html=True)
 
-    # Session info
-    col_a, col_b, col_c = st.columns(3)
-    col_a.markdown(f"**Role:** {st.session_state.role}")
-    col_b.markdown(f"**Level:** {st.session_state.level}")
-    col_c.markdown(f"**Q {cq+1} / {total}**")
-
-    st.divider()
+    # Session header
+    st.markdown(f"""
+    <div class="session-header">
+      <div class="session-meta">
+        <span class="meta-chip">{st.session_state.lang}</span>
+        <span class="meta-chip">{qtype.capitalize()}</span>
+      </div>
+      <div class="q-counter">Q{cq+1} <span>/ {total}</span></div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Question card
-    qtype = q.get("type","behavioral")
-    type_class = f"type-{qtype}"
+    tip_html = f'<div class="question-tip"><strong>Tip:</strong> {q["tip"]}</div>' if q.get("tip") else ""
     st.markdown(f"""
-    <div class="card">
-      <div class="q-header">
-        <span class="q-num">Question {cq+1} of {total}</span>
-        <span class="q-type-badge {type_class}">{qtype.capitalize()}</span>
+    <div class="question-card animate-up">
+      <div class="q-type-row">
+        <span class="type-badge type-{qtype}">{qtype}</span>
       </div>
-      <div class="q-text">{q['question']}</div>
-      {'<div class="q-tip">💡 ' + q["tip"] + '</div>' if q.get("tip") else ''}
+      <div class="question-text">{q['question']}</div>
+      {tip_html}
     </div>
     """, unsafe_allow_html=True)
 
-
-    # ── VOICE INPUT COMPONENT ──────────────────────────────────────────
+    # Voice Input
     voice_html = """
-<div class="voice-wrap" id="voiceWrap">
-  <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Click to speak">
-    🎤
-  </button>
-  <div class="voice-status" id="voiceStatus">
-    <div class="vs-title">Click mic to speak your answer</div>
-    <div class="vs-sub">Supports English, Tamil, Hindi</div>
+<div class="voice-strip" id="vStrip">
+  <button class="mic-orb" id="micBtn" onclick="toggleVoice()">🎤</button>
+  <div class="voice-info" id="vInfo">
+    <div class="vi-title">Click mic to record your answer</div>
+    <div class="vi-sub">Supports English · Tamil · Hindi</div>
   </div>
 </div>
-
+<style>
+  .voice-strip, .voice-strip * { font-family: 'Cabinet Grotesk', sans-serif; }
+</style>
 <script>
-let recognition = null;
-let isListening = false;
-let finalTranscript = '';
-
-// Check browser support
-if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-  document.getElementById('voiceWrap').innerHTML =
-    '<div style="padding:10px;color:#94a3b8;font-size:.82rem">⚠️ Voice not supported in this browser. Use Chrome!</div>';
+let rec = null, listening = false, final_ = '';
+const SRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SRec) {
+  document.getElementById('vStrip').innerHTML =
+    '<div style="padding:10px;color:#94a3b8;font-size:.8rem">⚠️ Voice unsupported — please use Chrome</div>';
 }
-
 function toggleVoice() {
-  if (isListening) {
-    stopListening();
-  } else {
-    startListening();
-  }
+  listening ? stopRec() : startRec();
 }
-
-function startListening() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-
-  // Language based on page lang
-  const langMap = { 'Tamil': 'ta-IN', 'Hindi': 'hi-IN', 'English': 'en-US' };
-  const pageLang = '""" + st.session_state.lang + """';
-  recognition.lang = langMap[pageLang] || 'en-US';
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 1;
-
-  recognition.onstart = () => {
-    isListening = true;
-    document.getElementById('voiceBtn').classList.add('listening');
-    document.getElementById('voiceBtn').innerHTML = '⏹';
-    document.getElementById('voiceStatus').classList.add('active');
-    document.getElementById('voiceStatus').innerHTML =
-      '<div class="vs-title">🔴 Listening... Speak now</div>' +
-      '<div class="wave-wrap">' +
-      '<div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>' +
-      '<div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>' +
-      '</div>';
+function startRec() {
+  rec = new SRec();
+  const map = { Tamil:'ta-IN', Hindi:'hi-IN', English:'en-US' };
+  rec.lang = map['""" + st.session_state.lang + """'] || 'en-US';
+  rec.continuous = true; rec.interimResults = true;
+  rec.onstart = () => {
+    listening = true;
+    document.getElementById('micBtn').classList.add('on');
+    document.getElementById('micBtn').innerHTML = '⏹';
+    document.getElementById('vInfo').innerHTML =
+      '<div class="vi-title" style="color:#e11d48">Recording…</div>' +
+      '<div class="wave"><div class="wave-b"></div><div class="wave-b"></div><div class="wave-b"></div><div class="wave-b"></div><div class="wave-b"></div></div>';
   };
-
-  recognition.onresult = (event) => {
-    let interim = '';
-    finalTranscript = '';
-    for (let i = 0; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript + ' ';
-      } else {
-        interim += event.results[i][0].transcript;
-      }
+  rec.onresult = e => {
+    let interim = ''; final_ = '';
+    for (let i=0;i<e.results.length;i++){
+      e.results[i].isFinal ? (final_ += e.results[i][0].transcript+' ') : (interim += e.results[i][0].transcript);
     }
-    // Show live transcript
-    const display = finalTranscript + interim;
-    document.getElementById('voiceStatus').innerHTML =
-      '<div class="vs-title">🔴 Listening...</div>' +
-      '<div class="vs-sub" style="color:#334155;font-size:.82rem">' +
-        (display.length > 80 ? '...' + display.slice(-80) : display) +
-      '</div>';
+    const txt = final_+interim;
+    document.getElementById('vInfo').innerHTML =
+      '<div class="vi-title" style="color:#e11d48">Recording…</div>' +
+      '<div class="vi-sub live">'+(txt.length>70?'…'+txt.slice(-70):txt)+'</div>';
   };
-
-  recognition.onerror = (e) => {
-    stopListening();
-    document.getElementById('voiceStatus').innerHTML =
-      '<div class="vs-title" style="color:#ef4444">❌ Error: ' + e.error + '</div>' +
-      '<div class="vs-sub">Try again or use Chrome browser</div>';
-  };
-
-  recognition.onend = () => {
-    if (isListening) {
-      // Send transcript to Streamlit via query param trick
-      if (finalTranscript.trim()) {
-        const encoded = encodeURIComponent(finalTranscript.trim());
-        // Store in sessionStorage for Streamlit to pick up
-        sessionStorage.setItem('voiceTranscript', finalTranscript.trim());
-        // Update hidden input to trigger rerun
-        const url = new URL(window.location.href);
-        url.searchParams.set('voice', encoded.substring(0, 200));
-        window.history.replaceState({}, '', url);
-      }
-      stopListening();
+  rec.onerror = e => { stopRec(); document.getElementById('vInfo').innerHTML = '<div class="vi-title" style="color:#e11d48">Error: '+e.error+'</div><div class="vi-sub">Try again or use Chrome</div>'; };
+  rec.onend = () => {
+    if (final_.trim()) {
+      sessionStorage.setItem('vt', final_.trim());
+      const u = new URL(window.location.href);
+      u.searchParams.set('voice', encodeURIComponent(final_.trim()).substring(0, 200));
+      window.history.replaceState({}, '', u);
     }
+    stopRec();
   };
-
-  recognition.start();
+  rec.start();
 }
-
-function stopListening() {
-  isListening = false;
-  if (recognition) { try { recognition.stop(); } catch(e){} }
-  document.getElementById('voiceBtn').classList.remove('listening');
-  document.getElementById('voiceBtn').innerHTML = '🎤';
-  document.getElementById('voiceStatus').classList.remove('active');
-
-  const saved = sessionStorage.getItem('voiceTranscript') || '';
-  if (saved) {
-    document.getElementById('voiceStatus').innerHTML =
-      '<div class="vs-title">✅ Voice captured! See text below</div>' +
-      '<div class="vs-sub">' + saved.substring(0, 60) + (saved.length > 60 ? '...' : '') + '</div>';
-  } else {
-    document.getElementById('voiceStatus').innerHTML =
-      '<div class="vs-title">Click mic to speak your answer</div>' +
-      '<div class="vs-sub">Supports English, Tamil, Hindi</div>';
-  }
+function stopRec() {
+  listening = false;
+  if (rec) { try { rec.stop(); } catch(e){} }
+  document.getElementById('micBtn').classList.remove('on');
+  document.getElementById('micBtn').innerHTML = '🎤';
+  const saved = sessionStorage.getItem('vt') || '';
+  document.getElementById('vInfo').innerHTML = saved
+    ? '<div class="vi-title">✅ Captured! Text filled below</div><div class="vi-sub">'+(saved.substring(0,60))+(saved.length>60?'…':'')+'</div>'
+    : '<div class="vi-title">Click mic to record your answer</div><div class="vi-sub">Supports English · Tamil · Hindi</div>';
 }
 </script>
 """
-    st.components.v1.html(voice_html, height=90)
+    components.html(voice_html, height=80)
 
-    # Get voice transcript from query params
+    # Voice prefill
     voice_text = ""
     try:
         params = st.query_params
         if "voice" in params:
             voice_text = params["voice"]
-            # Clear after reading
             st.query_params.clear()
     except:
         pass
 
-    # Answer textarea — prefill with voice if available
     answer = st.text_area(
-        "✍️ Your Answer",
+        "Your Answer",
         value=voice_text,
-        placeholder="Speak using mic above OR type your answer here...",
-        height=160,
-        key=f"answer_{cq}"
+        placeholder="Speak using the mic above, or type your answer here…",
+        height=170,
+        key=f"ans_{cq}"
     )
 
-
-    col1, col2 = st.columns([3, 1])
+    col1, col2, col3 = st.columns([4, 1, 1])
     with col1:
-        submit = st.button("✨ Get AI Feedback", type="primary", use_container_width=True)
+        submit = st.button("Get AI Feedback →", type="primary", use_container_width=True)
     with col2:
-        skip = st.button("⏭ Skip", use_container_width=True)
+        skip = st.button("Skip", use_container_width=True)
+    with col3:
+        end = st.button("End", use_container_width=True)
 
     if submit:
         if not answer or len(answer.strip()) < 15:
-            st.warning("Please write a proper answer (at least a few sentences).")
+            st.warning("Please write at least a few sentences before submitting.")
         else:
-            with st.spinner("🤖 Analysing your answer..."):
+            with st.spinner("Analysing your answer…"):
                 try:
                     fb = get_feedback(
-                        st.session_state.role,
-                        st.session_state.level,
-                        q["question"],
-                        qtype,
-                        answer,
-                        st.session_state.lang
+                        st.session_state.role, st.session_state.level,
+                        q["question"], qtype, answer, st.session_state.lang
                     )
                     st.session_state.scores.append(fb["score"])
                     st.session_state.feedbacks.append(fb)
@@ -673,18 +997,16 @@ function stopListening() {
                     st.session_state.stage = "feedback"
                     st.rerun()
                 except Exception as e:
-                    st.error(f"❌ Feedback error: {e}")
+                    st.error(f"Feedback error: {e}")
 
     if skip:
         st.session_state.scores.append(0)
         st.session_state.feedbacks.append(None)
         st.session_state.current_q += 1
-        if st.session_state.current_q >= total:
-            st.session_state.stage = "results"
+        st.session_state.stage = "results" if st.session_state.current_q >= total else "interview"
         st.rerun()
 
-    st.divider()
-    if st.button("🔚 End Session & See Results"):
+    if end:
         st.session_state.stage = "results"
         st.rerun()
 
@@ -699,74 +1021,69 @@ elif st.session_state.stage == "feedback":
     q     = st.session_state.questions[cq]
     fb    = st.session_state.current_feedback
 
-    # Progress
     pct = int(((cq + 1) / total) * 100)
     st.markdown(f"""
-    <div class="progress-wrap">
-      <div class="progress-fill" style="width:{pct}%"></div>
+    <div class="prog-bar-outer">
+      <div class="prog-bar-inner" style="width:{pct}%"></div>
     </div>
-    <div class="progress-text">{cq+1} of {total} completed</div>
+    <div class="prog-meta">
+      <span>Feedback for Q{cq+1}</span>
+      <span>{cq+1} / {total} done</span>
+    </div>
     """, unsafe_allow_html=True)
 
     # Question recap
     st.markdown(f"""
-    <div class="card">
-      <div style="font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748b;margin-bottom:8px">
-        Question {cq+1}
+    <div class="question-card animate-up" style="padding:20px 24px;">
+      <div class="q-type-row">
+        <span class="type-badge type-{q.get('type','behavioral')}">{q.get('type','behavioral')}</span>
+        <span style="font-size:.72rem;color:var(--text-muted);font-family:'Space Mono',monospace;">Q{cq+1}</span>
       </div>
-      <div style="font-size:1rem;font-weight:600;color:#0f172a;">{q['question']}</div>
+      <div class="question-text" style="font-size:1rem;margin-bottom:0">{q['question']}</div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Feedback
-    score   = fb["score"]
-    verdict = fb["verdict"]
+    # Score + verdict
+    score = fb["score"]
     if score >= 8:
-        fb_class  = "fb-good"
-        score_cls = "score-good"
-        emoji     = "🌟"
+        sc_cls, emoji, verdict_str = "score-good", "🌟", fb["verdict"]
     elif score >= 6:
-        fb_class  = "fb-ok"
-        score_cls = "score-ok"
-        emoji     = "👍"
+        sc_cls, emoji, verdict_str = "score-ok", "👍", fb["verdict"]
     else:
-        fb_class  = "fb-improve"
-        score_cls = "score-improve"
-        emoji     = "💪"
+        sc_cls, emoji, verdict_str = "score-bad", "💪", fb["verdict"]
 
     st.markdown(f"""
-    <div class="{fb_class}">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
-        <div class="score-big {score_cls}">{score}<span style="font-size:1.2rem">/10</span></div>
-        <div>
-          <div style="font-size:1.05rem;font-weight:700;color:#0f172a">{emoji} {verdict}</div>
-          <div style="font-size:.78rem;color:#64748b;margin-top:2px">AI Evaluation</div>
+    <div class="form-card animate-up" style="padding:28px 28px 24px;">
+      <div class="fb-header">
+        <div class="score-display {sc_cls}">{score}<span style="font-size:1.5rem;opacity:.5">/10</span></div>
+        <div class="verdict-stack">
+          <div class="verdict-label">AI Verdict</div>
+          <div class="verdict-text">{emoji} {verdict_str}</div>
         </div>
       </div>
-      <div style="font-size:.9rem;color:#374151;line-height:1.7;margin-bottom:8px">
-        ✅ <strong>Strengths:</strong> {fb['strengths']}
+      <div class="fb-grid">
+        <div class="fb-cell">
+          <div class="fb-cell-label lbl-green">✦ Strengths</div>
+          <div class="fb-cell-text">{fb['strengths']}</div>
+        </div>
+        <div class="fb-cell">
+          <div class="fb-cell-label lbl-amber">↗ Improvements</div>
+          <div class="fb-cell-text">{fb['improvements']}</div>
+        </div>
       </div>
-      <div style="font-size:.9rem;color:#374151;line-height:1.7">
-        🎯 <strong>Improve:</strong> {fb['improvements']}
-      </div>
-      <div class="sample-box">
-        <div class="sample-label">✨ Model Answer</div>
-        {fb['sample_answer']}
+      <div class="sample-answer-box">
+        <div class="sa-label">Model Answer</div>
+        <div class="sa-text">{fb['sample_answer']}</div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Next button
     is_last = (cq + 1 >= total)
-    btn_label = "🏁 See Final Results" if is_last else "➡️ Next Question"
-
+    btn_label = "View Final Results →" if is_last else "Next Question →"
     if st.button(btn_label, type="primary", use_container_width=True):
         st.session_state.current_q += 1
         st.session_state.current_feedback = None
-        if st.session_state.current_q >= total:
-            st.session_state.stage = "results"
-        else:
-            st.session_state.stage = "interview"
+        st.session_state.stage = "results" if st.session_state.current_q >= total else "interview"
         st.rerun()
 
 
@@ -780,51 +1097,47 @@ elif st.session_state.stage == "results":
     avg      = round(sum(scores) / answered * 10) if answered else 0
     best     = f"{max(scores)}/10" if scores else "—"
 
-    if avg >= 75:
-        trophy = "🏆"; overall = "Excellent Performance!"
-    elif avg >= 55:
-        trophy = "🎯"; overall = "Good Performance!"
-    else:
-        trophy = "💪"; overall = "Keep Practicing!"
+    if avg >= 75:   trophy, msg = "🏆", "Excellent work!"
+    elif avg >= 55: trophy, msg = "🎯", "Solid performance!"
+    else:           trophy, msg = "💪", "Keep practicing!"
 
     st.markdown(f"""
-    <div class="result-box">
-      <div style="font-size:4rem">{trophy}</div>
-      <h2>Interview Complete!</h2>
-      <p>{overall} Here's your summary:</p>
-      <div class="stat-grid">
-        <div class="stat-item">
-          <span class="stat-val">{answered}</span>
-          <div class="stat-lbl">Questions Answered</div>
+    <div class="results-hero animate-up">
+      <span class="trophy-emoji">{trophy}</span>
+      <div class="results-title">Interview Complete</div>
+      <div class="results-sub">{msg} Here's how you did:</div>
+      <div class="results-stats">
+        <div class="rs-item">
+          <span class="rs-val">{answered}</span>
+          <div class="rs-lbl">Answered</div>
         </div>
-        <div class="stat-item">
-          <span class="stat-val">{avg}%</span>
-          <div class="stat-lbl">Average Score</div>
+        <div class="rs-item">
+          <span class="rs-val">{avg}%</span>
+          <div class="rs-lbl">Score</div>
         </div>
-        <div class="stat-item">
-          <span class="stat-val">{best}</span>
-          <div class="stat-lbl">Best Answer</div>
+        <div class="rs-item">
+          <span class="rs-val">{best}</span>
+          <div class="rs-lbl">Best Answer</div>
         </div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Score breakdown
     if st.session_state.feedbacks:
-        st.markdown("#### 📊 Question Breakdown")
+        st.markdown('<div class="section-label" style="margin:24px 0 16px;">Question Breakdown</div>', unsafe_allow_html=True)
         for i, (fb, q) in enumerate(zip(st.session_state.feedbacks, st.session_state.questions)):
             if fb:
-                score = fb["score"]
-                color = "#059669" if score >= 8 else "#d97706" if score >= 6 else "#dc2626"
-                with st.expander(f"Q{i+1}: {q['question'][:60]}... — Score: {score}/10"):
-                    st.markdown(f"**✅ Strengths:** {fb['strengths']}")
-                    st.markdown(f"**🎯 Improve:** {fb['improvements']}")
+                s = fb["score"]
+                dot = "🟢" if s >= 8 else "🟡" if s >= 6 else "🔴"
+                with st.expander(f"{dot}  Q{i+1} — {q['question'][:55]}…  ·  {s}/10"):
+                    st.markdown(f"**Strengths:** {fb['strengths']}")
+                    st.markdown(f"**Improvements:** {fb['improvements']}")
             else:
-                with st.expander(f"Q{i+1}: {q['question'][:60]}... — Skipped"):
+                with st.expander(f"⚪  Q{i+1} — {q['question'][:55]}…  ·  Skipped"):
                     st.markdown("*This question was skipped.*")
 
     st.divider()
-    if st.button("🔄 Start New Interview", type="primary", use_container_width=True):
+    if st.button("Start New Interview →", type="primary", use_container_width=True):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         init_state()
