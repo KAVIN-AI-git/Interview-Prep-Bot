@@ -51,9 +51,27 @@ html, body, [class*="css"] {
 #MainMenu, footer, header { visibility: hidden; }
 .block-container {
   padding: 0 !important;
+  padding-top: 0 !important;
   max-width: 800px !important;
   margin: 0 auto;
 }
+/* Remove ALL streamlit top whitespace */
+.stApp > header { display: none !important; }
+section[data-testid="stSidebar"] { display: none !important; }
+div[data-testid="stAppViewContainer"] > section > div:first-child {
+  padding-top: 0 !important;
+}
+div[data-testid="stVerticalBlock"] > div:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+/* Nuke the default 6rem top padding Streamlit adds */
+.main .block-container { padding-top: 1rem !important; }
+/* Hide empty iframe spacers */
+iframe[height="0"], iframe[height="2"] { display: none !important; }
+div[data-testid="stVerticalBlockBorderWrapper"]:empty { display: none !important; }
+/* Remove gap above first element */
+.element-container:first-child { margin-top: 0 !important; }
 
 /* ─── GLOBAL WRAPPER ─── */
 .app-shell {
@@ -658,6 +676,33 @@ div[data-testid="stAlert"] {
 .delay-2 { animation-delay: .2s; }
 .delay-3 { animation-delay: .3s; }
 
+/* ─── FOOTER ─── */
+.app-footer {
+  margin-top: 56px;
+  padding: 24px 0 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.footer-text {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.footer-heart { color: #e11d48; font-size: .9rem; }
+.footer-name {
+  font-family: 'Clash Display', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: .04em;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -749,6 +794,83 @@ st.markdown("""
   <div class="logo-mark"><span>IQ</span>Interview Prep</div>
   <div class="header-pill">● AI-Powered</div>
 </div>
+""", unsafe_allow_html=True)
+
+# ─── MOTIVATION TICKER ────────────────────────────────────────────────
+st.markdown("""
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span class="tick-item">🎯 HR is ready &mdash; <em>are you?</em></span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">💼 Your dream job won't wait</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🔥 Practice today. Ace it tomorrow.</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🧠 Every answer you practice = more confidence</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">⏱️ The interview clock is ticking</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🎤 Speak up. Stand out. Get hired.</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🏆 Top candidates prepare. Do you?</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🎯 HR is ready &mdash; <em>are you?</em></span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">💼 Your dream job won't wait</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🔥 Practice today. Ace it tomorrow.</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🧠 Every answer you practice = more confidence</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">⏱️ The interview clock is ticking</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🎤 Speak up. Stand out. Get hired.</span>
+    <span class="tick-sep">✦</span>
+    <span class="tick-item">🏆 Top candidates prepare. Do you?</span>
+    <span class="tick-sep">✦</span>
+  </div>
+</div>
+<style>
+.ticker-wrap {
+  background: var(--ink);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  border: 1px solid rgba(255,255,255,.06);
+  position: relative;
+}
+.ticker-wrap::before, .ticker-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 48px;
+  z-index: 2;
+  pointer-events: none;
+}
+.ticker-wrap::before { left: 0; background: linear-gradient(90deg, var(--ink), transparent); }
+.ticker-wrap::after  { right: 0; background: linear-gradient(-90deg, var(--ink), transparent); }
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: tickerScroll 28s linear infinite;
+  padding: 13px 0;
+}
+.ticker-track:hover { animation-play-state: paused; }
+.tick-item {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.75);
+  padding: 0 20px;
+}
+.tick-item em { font-style: normal; color: var(--gold); font-weight: 700; }
+.tick-sep { color: var(--gold); opacity: .4; font-size: .7rem; flex-shrink: 0; }
+@keyframes tickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+</style>
 """, unsafe_allow_html=True)
 
 
@@ -953,7 +1075,7 @@ function stopRec() {
 }
 </script>
 """
-    components.html(voice_html, height=80)
+    components.html(voice_html, height=82, scrolling=False)
 
     # Voice prefill
     voice_text = ""
@@ -1142,3 +1264,13 @@ elif st.session_state.stage == "results":
             del st.session_state[key]
         init_state()
         st.rerun()
+
+# ── FOOTER (always shown) ──────────────────────────────────────────────
+st.markdown("""
+<div class="app-footer">
+  <span class="footer-text">Powered with</span>
+  <span class="footer-heart">♥</span>
+  <span class="footer-text">by</span>
+  <span class="footer-name">Preethi U</span>
+</div>
+""", unsafe_allow_html=True)
